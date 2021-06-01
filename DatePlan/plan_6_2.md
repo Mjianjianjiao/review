@@ -35,7 +35,9 @@ Student* stu = new Student; //堆上
 
 ```
 - 成员函数存储在代码段(存储可执行代码、字符串常量)
-[c++ 内存模型](https://github.com/Mjianjianjiao/review/blob/master/Picture/v2-0d8aeed026fcb865e5f228ee8cbe6d7e_720w.jpeg)
+
+[](https://github.com/Mjianjianjiao/review/blob/master/Picture/v2-0d8aeed026fcb865e5f228ee8cbe6d7e_720w.jpeg)
+
 ```
 系统内核
 环境变量/命令行参数
