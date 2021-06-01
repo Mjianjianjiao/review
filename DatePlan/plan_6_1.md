@@ -57,7 +57,6 @@ const int* const p; //两者都不可变
     2. 通过类名:: 调用
     ```
     
-    
     - **修饰成员函数：** 属于类的成员函数，不单独属于某一个对象。在成员函数前加 static 。在类的静态成员函数中不能使用非静态成员函数变量，因为静态成员函数中不含this 指针，所以与this 指针相关的都不可以。
     - 与静态成员变量相同，静态成员函数可以直接访问。
     
@@ -84,6 +83,8 @@ const int* const p; //两者都不可变
 #### [mutable](https://liam.page/2017/05/25/the-mutable-keyword-in-Cxx/)
 
 #### [new/delete](https://blog.csdn.net/hazir/article/details/21413833?utm_medium=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBlogCommendFromMachineLearnPai2%7Edefault-2.control&depth_1-utm_source=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBlogCommendFromMachineLearnPai2%7Edefault-2.control)
+    new 和 delete 可以重载
+
 [与malloc/free区别](https://blog.csdn.net/u010510020/article/details/76266505)
 
 #### [register](https://blog.csdn.net/M_jianjianjiao/article/details/80149790?ops_request_misc=%257B%2522request%255Fid%2522%253A%2522162251143716780271581655%2522%252C%2522scm%2522%253A%252220140713.130102334.pc%255Fblog.%2522%257D&request_id=162251143716780271581655&biz_id=0&utm_medium=distribute.pc_search_result.none-task-blog-2~blog~first_rank_v2~rank_v29-1-80149790.nonecase&utm_term=register&spm=1018.2226.3001.4450)
