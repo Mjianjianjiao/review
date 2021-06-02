@@ -44,7 +44,7 @@ Student* stu = new Student; //堆上
 ```
 - 成员函数存储在代码段(存储可执行代码、字符串常量)
 
-![内存布局](./Picture/v2-0d8aeed026fcb865e5f228ee8cbe6d7e_720w.jpeg)
+![内存布局](../Picture/v2-0d8aeed026fcb865e5f228ee8cbe6d7e_720w.jpeg)
 
 ```
 系统内核
