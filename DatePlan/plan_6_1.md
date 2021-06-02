@@ -82,7 +82,7 @@ const int* const p; //两者都不可变
 
 #### [mutable](https://liam.page/2017/05/25/the-mutable-keyword-in-Cxx/)
 
-#### [new/delete](https://blog.csdn.net/hazir/article/details/21413833?utm_medium=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBlogCommendFromMachineLearnPai2%7Edefault-2.control&depth_1-utm_source=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBlogCommendFromMachineLearnPai2%7Edefault-2.control)
+#### [new/delete](https://www.cnblogs.com/hazir/p/new_and_delete.html)
     new 和 delete 可以重载
 
 [与malloc/free区别](https://blog.csdn.net/u010510020/article/details/76266505)

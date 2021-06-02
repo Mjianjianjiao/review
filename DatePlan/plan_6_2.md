@@ -60,8 +60,46 @@ char *p4 = (char *)alloca(100*sizeof(char));
 - relloc: 对传入的指针进行扩容或缩容，返回的地址可能与传入的地址不一致，扩容时如果当前指针后的空间不够，可能会重新找一个满足条件的空间，将数据拷贝到新的地址，旧的地址空间释放。
 - alloca :在栈上开辟空间，自动释放
 
-#### new/delete 的区别
+#### new/delete
+---
+- new 操作符申请内存 分为两步， 1.申请内存 2.调用构造函数初始化对象
+    - new 底层是通过operator new进行内存申请，而operator new 底层调用malloc申请内存
+    ```
+    void *__CRTDECL operator new(size_t size) throw (std::bad_alloc)
+    {
+        // try to allocate size bytes
+        void *p;
+        while ((p = malloc(size)) == 0) //申请空间
+        if (_callnewh(size) == 0) //若申请失败则调用处理函数
+        {
+        // report no memory
+        static const std::bad_alloc nomem;
+        _RAISE(nomem); //#define _RAISE(x) ::std:: _Throw(x) 抛出nomem的异常
+        }   
+        return (p);
+    }
+    ```
+    - operator new 由多个版本，所以new可以重载
+    ```
+    // 这4个版本可能抛出异常
+    void *operator new(size_t);			// 分配一个对象
+    void *operator new[](size_t);			// 分配一个数组
+    void *operator delete(void*) noexcept;		// 释放一个对象
+    void *operator delete[](void*) noexcept;	// 释放一个数组
+    // 这些版本承若不会抛出异常
+    void *operator new(size_t, nothorw_t &);		// 分配一个对象
+    void *operator new[](size_t, nothorw_t &);		// 分配一个数组
+    void *operator delete(void*, nothorw_t &) noexcept;	// 释放一个对象
+    void *operator delete[](void*, nothorw_t &) noexcept;	// 释放一个数组
+    ```
+        - new 操作：申请内存，调用构造。
+            | 
+        - operator new : 申请内存，抛出异常
+            |
+        - malloc 申请内存
 
+- delete 调用析构函数， 释放内存
+    - 底层由operator delete 实现，operator delete 底层调用 free 
 
 
 ### ｜ 类的大小
@@ -191,6 +229,7 @@ char *p4 = (char *)alloca(100*sizeof(char));
         - 析构函数的命名是在类名前加～
         - 无参数 无返回值
         - 一个类只有一个析构函数，未显示定义式，生成默认的析构函数
+        - 析构函数释放资源，不释放内存，由delete完成
     - 拷贝构造函数
         - **拷贝构造函数的参数只有一个用(一般常用const修饰)且必须使用引用传参，使用传值方式会引发无穷递归调用(如果在传递参数是传值，可能会不停调用拷贝构造)**。
         - 若未显示定义，系统生成默认的拷贝构造函数，是构造函数的重载。 默认的拷贝构造函数对象按内存存储按字节序完成拷 贝，这种拷贝我们叫做浅拷贝，或者值拷贝
