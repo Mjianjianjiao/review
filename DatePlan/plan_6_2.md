@@ -57,13 +57,14 @@ char *p4 = (char *)alloca(100*sizeof(char));
 ```
 - malloc: 错误返回空指针，成功返回void* 指针指向的连续存储空间, 只需传递申请大小，不进行初始化，需调用memset 进行初始化
 - calloc:可以指定申请的元素个数，并且按位初始化为0 
-- relloc: 对传入的指针进行扩容或缩容，返回的地址可能与传入的地址不一致，扩容时如果当前指针后的空间不够，可能会重新找一个满足条件的空间，将数据拷贝到新的地址，旧的地址空间释放。
+- relloc: 对传入的指针进行扩容，返回的地址可能与传入的地址不一致，扩容时如果当前指针后的空间不够，可能会重新找一个满足条件的空间，将数据拷贝到新的地址，旧的地址空间释放。
 - alloca :在栈上开辟空间，自动释放
 
 #### new/delete
 ---
 - new 操作符申请内存 分为两步， 1.申请内存 2.调用构造函数初始化对象
     - new 底层是通过operator new进行内存申请，而operator new 底层调用malloc申请内存
+    - 会初始化， 做类型安全检查
     ```
     void *__CRTDECL operator new(size_t size) throw (std::bad_alloc)
     {
@@ -99,9 +100,56 @@ char *p4 = (char *)alloca(100*sizeof(char));
         - malloc 申请内存
 
 - delete 调用析构函数， 释放内存
-    - 底层由operator delete 实现，operator delete 底层调用 free 
+    - 底层由operator delete 实现，operator delete (会抛出异常)底层调用 free 
+    ```
+    void operator delete(void *pUserData)
+    void operator delete(void *pUserData)
+    {
+    _CrtMemBlockHeader * pHead;
+    RTCCALLBACK(_RTC_Free_hook, (pUserData, 0));
+    if (pUserData == NULL)
+    return;
 
+    _mlock(_HEAP_LOCK); /* block other threads */
+     __TRY
+     /* get a pointer to memory block header */
+     pHead = pHdr(pUserData);
+    /* verify block type */
+     _ASSERTE(_BLOCK_TYPE_IS_VALID(pHead->nBlockUse));
+    _free_dbg( pUserData, pHead->nBlockUse );
+    __FINALLY
+     _munlock(_HEAP_LOCK); /* release other threads */
+    __END_TRY_FINALLY
+    return;
+    }
+    - delete 也有多个版本，可以重载
+    ```
 
+#### 定位new 表达式 placement new
+- 给定一个已有的内存地址，在上面调用构造函数进行初始化对象。不分配内存
+
+- 用法
+
+```
+new (place_address) type
+new (palce_address) type (initializer-list)
+new(address) type[size];
+new(address) type[size]{braced initializer list};
+
+void *buffer = ::operator new(sizeof(string));
+buffer = new(buffer) string(“abd”);
+```
+- place_address必须是个指针，指向已经分配好的内存。为了使用这种形式的new表达式，必须包含头文件<new>
+- 在需要反复创建删除对象时，使用定位new 表达式可以减少内存分配释放的消耗
+- 申请的内存不再局限于堆，可以在指定地址区域(栈区、堆区、静态区)构造对象
+- 在删除定位new 的表达式生成的对象时，需要显示的调用析构函数，需要释放内存时也需要使用对应的方式释放
+```
+std::string *sp = new std::string("a value");
+sp->~string(); //显示调用，但不会释放内存
+sp = new std::string("new value"); // 重新使用 sp 所指的内存空间进行对象的构造
+
+delete sp; //释放内存
+```
 ### ｜ 类的大小
 ---
 
@@ -304,7 +352,7 @@ class A{
 - 注意内部类可以直接访问外部类中的static、枚举成员，不需要外部类的对象/类名
 - sizeof(外部类)=外部类，和内部类没有任何关系。
 
-
-### 面试题
 ### leetcode
+[无重复字符最长子串](https://leetcode-cn.com/problems/longest-substring-without-repeating-characters/)
+[寻找两个正序数组的中位数](https://leetcode-cn.com/problems/median-of-two-sorted-arrays/)
 ### 智力题
